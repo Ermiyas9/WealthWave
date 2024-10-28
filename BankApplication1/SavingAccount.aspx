@@ -4,33 +4,36 @@
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
 
-    <div class="text-center">
-        <h3 class="display-4">Saving Account </h3>
+    <div class="text-center" style= "margin-top: 50px;">
+        <h3 class="display-4">Savings Account </h3>
     </div>
-
+    <!-- Display Account Number using Session -->
      <div>
         <p>Account Number:  <%= Session["CustomerId"] %><%= Session["CustomerId"] %></p>
      </div>
 
-    
+    <!-- Amount Input Field -->
 <div class="col-md-6">
     <div class="form-group" style="margin-top: 50px;">
         <label for="amount">Amount:</label>
         <asp:TextBox ID="amountTextBox" runat="server" CssClass="form-control" />
     </div>
 </div>
+    <!-- Balance Display Field -->
 <div class="col-md-6">
     <div class="form-group" style="margin-top: 50px;">
-        <label for="balance">Balance:</label>
+        <label for="balance">Current Balance:</label>
         <asp:TextBox ID="balanceTextBox" runat="server" CssClass="form-control" ReadOnly="true"/>
     </div>
 </div>
+     <!-- Deposit Radio Button -->
 <div class="col-md-6">
     <div class="form-group" style="margin-top: 50px;">
         <label for="deposit">Deposit:</label>
         <asp:RadioButton ID="depositRadioButton" runat="server" GroupName="TransactionType" />
     </div>
 </div>
+    <!-- Withdraw Radio Button -->
 <div class="col-md-6">
     <div class="form-group" style="margin-top: 50px;">
         <label for="withdraw">Withdraw:</label>
@@ -42,15 +45,26 @@
 <div class="form-group" style="margin-top: 50px;">
 </div>
 
-        <!-- Submit Button -->
+    <!-- Submit Transaction Button -->
 <div class="form-group" style="margin-top: 50px;">
     <asp:Button ID="savingSubmitbtn" CssClass="fancy-button primary-button" Text="Submit" runat="server" class="btn btn-primary" OnClick="TransactionButton_Click" />
     <asp:Button ID="btnLogout" CssClass="fancy-button primary-button"  Text="Log Out" runat ="server"  class="btn btn-primary" OnClick="LogoutButton_Click" />
 </div>
 
-    <!--lbel for Error message-->
+    <!--label for Error message-->
 <div>
     <asp:Label ID="ShowMessage" runat="server" ForeColor="Red" Text=""></asp:Label>
 </div>
+    <!-- Navigational Links -->
+    <div class="bodyTitles" style="position: absolute; top: 250px; right: 250px;">
+        <h3>Go To:</h3>
+        <ul>
+            <li><asp:HyperLink NavigateUrl="AccountDetails.aspx" Text="Account Details" runat="server" /></li>
+            <li><asp:HyperLink NavigateUrl="ChequingAccount.aspx" Text="Deposit to Chequings" runat="server" /></li>
+            <li><asp:HyperLink NavigateUrl="LoanAccount.aspx" Text="Pay off your Loan" runat="server" /></li>
+            <li><asp:HyperLink NavigateUrl="SettingAndPrivacy.aspx" Text="Setting and Privacy" runat="server" /></li>
+            <li><asp:HyperLink NavigateUrl="ContactAndSupport.aspx" Text="Contact and Support" runat="server" /></li>
+        </ul>
+    </div>
         
 </asp:Content>

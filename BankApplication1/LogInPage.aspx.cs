@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
@@ -21,28 +22,31 @@ namespace BankApplication1
         {
 
         }
-
-
-
-
+        // This method is called when the login button is clicked.
         protected void SubmitButton_Click(object sender, EventArgs e)
         {
+            // Get the connection string from the web.config file
             String connString = System.Configuration.ConfigurationManager.ConnectionStrings["WebAppConnString"].ToString();
 
-            using (MySql.Data.MySqlClient.MySqlConnection conn = new MySql.Data.MySqlClient.MySqlConnection(connString))
+            // Create a connection to the database
+            // using (MySql.Data.MySqlClient.MySqlConnection conn = new MySql.Data.MySqlClient.MySqlConnection(connString))
+            using (MySql.Data.MySqlClient.MySqlConnection conn = new MySql.Data.MySqlClient.MySqlConnection("Server=localhost;Database=db_aa9c1a_bankapp;User Id=root;Password=Ethio-canadian260045;"))
             {
                 conn.Open();
+                // Define the SQL query to check the username and password
+                querystr = "SELECT * FROM db_aa9c1a_bankapp.customer WHERE username=@username AND Password1=@Password";
 
-                querystr = "SELECT * FROM bankapplication.customer WHERE username=@username AND Password1=@Password";
+                // Create a MySqlCommand object with parameters
                 using (MySql.Data.MySqlClient.MySqlCommand cmd = new MySql.Data.MySqlClient.MySqlCommand(querystr, conn))
                 {
                     cmd.Parameters.AddWithValue("@Username", username.Text);
                     cmd.Parameters.AddWithValue("@Password", Password1.Text);
-
+                    // Execute the query and read the result
                     using (MySql.Data.MySqlClient.MySqlDataReader reader = cmd.ExecuteReader())
                     {
                         if (reader.HasRows && reader.Read())
                         {
+                            // Store user information in session variables
                             int customerId = reader.GetInt32(reader.GetOrdinal("CustomerId"));
                             Session["CustomerId"] = customerId;
 
@@ -80,7 +84,7 @@ namespace BankApplication1
                                 Email = email,
                                 SinNumber = sinNumber
                             };
-
+                            // Redirect to the home page
                             Response.BufferOutput = true;
                             Response.Redirect("HomePage.aspx", false);
                         }

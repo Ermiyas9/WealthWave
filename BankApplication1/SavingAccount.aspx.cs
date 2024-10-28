@@ -43,8 +43,7 @@ namespace BankApplication1
                 savingsAccount.CurrentBalance = currentBalance;
 
                 balanceTextBox.Text = savingsAccount.CurrentBalance.ToString();
-                // Displaying balance (might be good to let the user know interest applied on every deposit)
-
+                
             }
             else
             {
@@ -62,7 +61,7 @@ namespace BankApplication1
             conn = new MySql.Data.MySqlClient.MySqlConnection(connString);
             conn.Open();
             querystr = "";
-            querystr = "SELECT CurrentBalance FROM bankapplication.customer WHERE CustomerId='" + userID.ToString() + "'";
+            querystr = "SELECT CurrentBalance FROM db_aa9c1a_bankapp.customer WHERE CustomerId='" + userID.ToString() + "'";
             cmd = new MySql.Data.MySqlClient.MySqlCommand(querystr, conn);
             reader = cmd.ExecuteReader();
             while (reader.HasRows & reader.Read())
@@ -70,52 +69,78 @@ namespace BankApplication1
                 balance = reader.GetDouble(reader.GetOrdinal("CurrentBalance"));
                 Session["CustomerBalance"] = balance;
                 customerBalance = balance;
-
+       
             }
             reader.Close();
             conn.Close();
-
+                     
 
             return balance;
         }
 
-
+        // Method to do Transaction in database
         protected void TransactionButton_Click(object sender, EventArgs e)
         {
-            if (depositRadioButton.Checked)
+            if (string.IsNullOrEmpty(amountTextBox.Text))
             {
-                double depositAmount = Convert.ToDouble(amountTextBox.Text);
-
-                //Initialize the SavingsAccount instance with the retrieved balance
-                savingsAccount.CurrentBalance = customerBalance;
-
-                //// Perform deposit transaction
-                string message;
-                savingsAccount.DepositTransaction(depositAmount, out message);
-
-                // Present message to user
-                ShowMessage.Text = message;
-
-                //// Update the database with the new balance
-                UpdateBalanceInDatabase(userID, savingsAccount.CurrentBalance);
+                // Display a reminder message to enter the amount
+                ShowMessage.Text = "Please enter the transaction amount.";
+                return; 
             }
-            else if (withdrawRadioButton.Checked)
+            else
             {
-                double depositAmount = Convert.ToDouble(amountTextBox.Text);
+                ShowMessage.Text = "Please enter the transaction amount.";
+            }
+            try
+            {
+                if (depositRadioButton.Checked)
+                {
 
-                //Initialize the SavingsAccount instance with the retrieved balance
-                savingsAccount.CurrentBalance = customerBalance;
+                    if (string.IsNullOrEmpty(amountTextBox.Text))
+                    {
+                        // Display a reminder message to enter the amount
+                        ShowMessage.Text = "Please enter the transaction amount.";
+                        return;
+                    }
 
-                //// Perform deposit transaction
-                string message;
-                savingsAccount.WithdrawTransaction(depositAmount, out message);
+                    double depositAmount = Convert.ToDouble(amountTextBox.Text);
 
-                // Present message to user
-                ShowMessage.Text = message;
+                    //Initialize the SavingsAccount instance with the retrieved balance
+                    savingsAccount.CurrentBalance = customerBalance;
+
+                    //// Perform deposit transaction
+                    string message;
+                    savingsAccount.DepositTransaction(depositAmount, out message);
+
+                    // Present message to user
+                    ShowMessage.Text = message;
+
+                    //// Update the database with the new balance
+                    UpdateBalanceInDatabase(userID, savingsAccount.CurrentBalance);
+                }
+                else if (withdrawRadioButton.Checked)
+                {
+                    double depositAmount = Convert.ToDouble(amountTextBox.Text);
+
+                    //Initialize the SavingsAccount instance with the retrieved balance
+                    savingsAccount.CurrentBalance = customerBalance;
+
+                    //// Perform deposit transaction
+                    string message;
+                    savingsAccount.WithdrawTransaction(depositAmount, out message);
+
+                    // Present message to user
+                    ShowMessage.Text = message;
 
 
-                //// Update the database with the new balance
-                UpdateBalanceInDatabase(userID, savingsAccount.CurrentBalance);
+                    //// Update the database with the new balance
+                    UpdateBalanceInDatabase(userID, savingsAccount.CurrentBalance);
+                }
+            }
+            catch (FormatException)
+            {
+                // Display an error message to the user
+                ShowMessage.Text = "Invalid input format for transaction amount.";
             }
 
         }
